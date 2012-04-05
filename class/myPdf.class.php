@@ -9,8 +9,7 @@
  * @version   4.03
  */
 
-require_once(dirname(__FILE__).'/tcpdfConfig.php');
-require_once(dirname(__FILE__).'/../_tcpdf_'.HTML2PDF_USED_TCPDF_VERSION.'/tcpdf.php');
+require_once(LIB_DIR.'/tcpdf/tcpdf.php');
 
 class HTML2PDF_myPdf extends TCPDF
 {
@@ -24,6 +23,16 @@ class HTML2PDF_myPdf extends TCPDF
 
     // nb of segment to build a arc with bezier curv
     const ARC_NB_SEGMENT = 8;
+
+    protected function UTF8ToLatin1($str) {
+        if (!$this->isunicode) {
+            return $str;
+        }
+        if (function_exists('mb_convert_encoding'))
+            return mb_convert_encoding($str, "ISO-8859-2", "UTF-8");
+        else
+            return iconv("UTF-8", "ISO-8859-2", $str);
+    }
 
     /**
      * class constructor
@@ -121,7 +130,7 @@ class HTML2PDF_myPdf extends TCPDF
 
             // draw the footer
             parent::SetY(-11);
-            $this->SetFont('helvetica', 'I', 8);
+            $this->SetFont('arial', 'I', 8);
             $this->Cell(0, 10, $txt, 0, 0, 'R');
         }
     }
@@ -1222,10 +1231,12 @@ class HTML2PDF_myPdf extends TCPDF
             'text' => ($labelFontsize ? true : false),
             'fgcolor' => $color,
             'bgcolor' => false,
+            'font' => 'times',
+            'stretchtext' => 0,
         );
 
         // build the barcode
-        $this->write1DBarcode($code, $type, $x, $y, $w, $h, '', $style, 'N');
+        $this->write1DBarcode($code, $type, $x, $y - 2, $w, $h, '', $style, 'N');
 
         // it Label => add the FontSize to the height
         if ($labelFontsize) $h+= ($labelFontsize);
@@ -1255,7 +1266,7 @@ class HTML2PDF_myPdf extends TCPDF
         $bookmarkTitle = true,
         $displayPage = true,
         $page = null,
-        $fontName = 'helvetica')
+        $fontName = 'arial')
     {
         // bookmark the Title if wanted
         if ($bookmarkTitle) $this->Bookmark($titre, 0, -1);

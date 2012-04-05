@@ -12,13 +12,12 @@
 if (!defined('__CLASS_HTML2PDF__')) {
 
     define('__CLASS_HTML2PDF__', '4.03');
-    define('HTML2PDF_USED_TCPDF_VERSION', '5.0.002');
 
-    require_once(dirname(__FILE__).'/_class/exception.class.php');
-    require_once(dirname(__FILE__).'/_class/locale.class.php');
-    require_once(dirname(__FILE__).'/_class/myPdf.class.php');
-    require_once(dirname(__FILE__).'/_class/parsingHtml.class.php');
-    require_once(dirname(__FILE__).'/_class/parsingCss.class.php');
+    require_once(LIB_DIR.'/html2pdf/class/exception.class.php');
+    require_once(LIB_DIR.'/html2pdf/class/locale.class.php');
+    require_once(LIB_DIR.'/html2pdf/class/myPdf.class.php');
+    require_once(LIB_DIR.'/html2pdf/class/parsingHtml.class.php');
+    require_once(LIB_DIR.'/html2pdf/class/parsingCss.class.php');
 
     class HTML2PDF
     {
@@ -40,7 +39,7 @@ if (!defined('__CLASS_HTML2PDF__')) {
          */
         public $parsingHtml = null;
 
-        protected $_langue           = 'fr';        // locale of the messages
+        protected $_langue           = 'en';        // locale of the messages
         protected $_orientation      = 'P';         // page orientation : Portrait ou Landscape
         protected $_format           = 'A4';        // page format : A4, A3, ...
         protected $_encoding         = '';          // charset encoding
@@ -124,7 +123,7 @@ if (!defined('__CLASS_HTML2PDF__')) {
          * @param  array    $marges      Default marges (left, top, right, bottom)
          * @return HTML2PDF $this
          */
-        public function __construct($orientation = 'P', $format = 'A4', $langue='fr', $unicode=true, $encoding='UTF-8', $marges = array(5, 5, 5, 8))
+        public function __construct($orientation = 'P', $format = 'A4', $langue='en', $unicode=true, $encoding='UTF-8', $marges = array(10, 5, 15, 5))
         {
             // init the page number
             $this->_page         = 0;
@@ -306,7 +305,7 @@ if (!defined('__CLASS_HTML2PDF__')) {
          * @param  string  $fontName      font name to use
          * @return null
          */
-        public function createIndex($titre = 'Index', $sizeTitle = 20, $sizeBookmark = 15, $bookmarkTitle = true, $displayPage = true, $onPage = null, $fontName = 'helvetica')
+        public function createIndex($titre = 'Index', $sizeTitle = 20, $sizeBookmark = 15, $bookmarkTitle = true, $displayPage = true, $onPage = null, $fontName = 'arial')
         {
             $oldPage = $this->_INDEX_NewPage($onPage);
             $this->pdf->createIndex($this, $titre, $sizeTitle, $sizeBookmark, $bookmarkTitle, $displayPage, $onPage, $fontName);
@@ -1100,7 +1099,7 @@ if (!defined('__CLASS_HTML2PDF__')) {
             switch($st)
             {
                 case 'none':
-                    return array('helvetica', true, ' ');
+                    return array('arial', true, ' ');
 
                 case 'upper-alpha':
                 case 'lower-alpha':
@@ -1111,16 +1110,16 @@ if (!defined('__CLASS_HTML2PDF__')) {
                     }
                     $str = chr(96+$nb).$str;
 
-                    return array('helvetica', false, ($up ? strtoupper($str) : $str).'.');
+                    return array('arial', false, ($up ? strtoupper($str) : $str).'.');
 
                 case 'upper-roman':
                 case 'lower-roman':
                     $str = $this->_listeArab2Rom($nb);
 
-                    return array('helvetica', false, ($up ? strtoupper($str) : $str).'.');
+                    return array('arial', false, ($up ? strtoupper($str) : $str).'.');
 
                 case 'decimal':
-                    return array('helvetica', false, $nb.'.');
+                    return array('arial', false, $nb.'.');
 
                 case 'square':
                     return array('zapfdingbats', true, chr(110));

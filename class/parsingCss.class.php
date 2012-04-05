@@ -316,7 +316,7 @@ class HTML2PDF_parsingCss
 
         if ($this->_defaultFont) {
             if($family=='arial')
-                $family='helvetica';
+                $family='arial';
             elseif($family=='symbol' || $family=='zapfdingbats')
                 $style='';
 
@@ -326,7 +326,9 @@ class HTML2PDF_parsingCss
         }
 
         if($family=='arial')
-            $family='helvetica';
+            $family='arial';
+        elseif($family=='courier')
+            $style='courier';
         elseif($family=='symbol' || $family=='zapfdingbats')
             $style='';
 
