@@ -1228,15 +1228,16 @@ class HTML2PDF_myPdf extends TCPDF
         // the style of the barcode
         $style = array(
             'position' => 'S',
-            'text' => ($labelFontsize ? true : false),
+            'text' => true,
             'fgcolor' => $color,
             'bgcolor' => false,
             'font' => 'times',
             'stretchtext' => 0,
+            'fontsize' => $labelFontsize
         );
 
         // build the barcode
-        $this->write1DBarcode($code, $type, $x, $y - 2, $w, $h, '', $style, 'N');
+        $this->write1DBarcode($code, $type, $x, $y - 2, $w, $h, '', $style, '');
 
         // it Label => add the FontSize to the height
         if ($labelFontsize) $h+= ($labelFontsize);
