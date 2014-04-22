@@ -148,7 +148,7 @@ class HTML2PDF_parsingCss
         $this->value['overflow']         = 'visible';
 
         $this->value['color']            = array(0, 0, 0);
-        $this->value['background']       = array('color' => null, 'image' => null, 'position' => null, 'repeat' => null);
+        $this->value['background']       = array('color' => null, 'image' => null, 'position' => null, 'repeat' => null, 'transparency' => null);
         $this->value['border']           = array();
         $this->value['padding']          = array();
         $this->value['margin']           = array();
@@ -195,7 +195,7 @@ class HTML2PDF_parsingCss
         $this->value['display']    = null;
         $this->value['rotate']     = null;
         $this->value['overflow']   = 'visible';
-        $this->value['background'] = array('color' => null, 'image' => null, 'position' => null, 'repeat' => null);
+        $this->value['background'] = array('color' => null, 'image' => null, 'position' => null, 'repeat' => null, 'transparency' => null);
         $this->value['border']     = array(
             't' => $this->readBorder('none'),
             'r' => $this->readBorder('none'),
@@ -1628,12 +1628,21 @@ class HTML2PDF_parsingCss
             return array($r*255., $v*255., $b*255.);
         }
 
+        // like rgba(100, 100, 100, 1)
+        if (preg_match('/rgba\([\s]*([0-9%\.]+)[\s]*,[\s]*([0-9%\.]+)[\s]*,[\s]*([0-9%\.]+)[\s]*,[\s]*([0-9%\.]+)[\s]*\)/isU', $css, $match)) {
+            $r = $this->_convertSubColor($match[1]);
+            $v = $this->_convertSubColor($match[2]);
+            $b = $this->_convertSubColor($match[3]);
+            $this->value['background']['transparency'] = 0.6;
+            return array($r*255., $v*255., $b*255.);
+        }
+
         // like cmyk(100, 100, 100, 100)
-        if (preg_match('/cmyk\([\s]*([0-9%\.]+)[\s]*,[\s]*([0-9%\.]+)[\s]*,[\s]*([0-9%\.]+)[\s]*,[\s]*([0-9%\.]+)[\s]*\)/isU', $css, $match)) {
+        if (preg_match('/cmyk\([\s]*([0-9%\.]+)[\s]*,[\s]*([0-9%\.]+)[\s]*,[\s]*([0-9%\.]+)[\s]*,[\s]*([0-9]+(\.[0-9]+)?)[\s]*\)/isU', $css, $match)) {
             $c = $this->_convertSubColor($match[1]);
             $m = $this->_convertSubColor($match[2]);
             $y = $this->_convertSubColor($match[3]);
-            $k = $this->_convertSubColor($match[4]);
+            $k = $this->_convertTransparency($match[4]);
             return array($c*100., $m*100., $y*100., $k*100.);
         }
 
@@ -1655,6 +1664,18 @@ class HTML2PDF_parsingCss
         } else {
             $c = floatVal($c);
             if ($c>1) $c = $c/255.;
+        }
+
+        return $c;
+    }
+
+    protected function _convertTransparency($c)
+    {
+        if (substr($c, -1)=='%') {
+            $c = floatVal(substr($c, 0, -1))/100.;
+        } else {
+            $c = floatVal($c);
+            if ($c>1) $c = 1;
         }
 
         return $c;

@@ -1537,6 +1537,12 @@ if (!defined('__CLASS_HTML2PDF__')) {
                 $pdfStyle.= 'F';
             }
 
+            if ($background['transparency']) {
+                $this->pdf->SetAlpha($background['transparency']);
+            } else {
+                $this->pdf->SetAlpha(1);
+            }
+
             // if we have a background to fill => fill it with a path (because of the radius)
             if ($pdfStyle) {
                 $this->pdf->clippingPathStart($x, $y, $w, $h, $outTL, $outTR, $outBL, $outBR);
